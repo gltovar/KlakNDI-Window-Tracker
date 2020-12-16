@@ -8,7 +8,7 @@ Make sure to follow installation instructions here: <https://github.com/keijiro/
 
 ## Installation
 
-Add package to UPM  `https://github.com/keijiro/KlakNDI.git#UPM`
+Add package to UPM  `https://github.com/keijiro/KlakNDI.git#upm`
 
 ## How to use
 
