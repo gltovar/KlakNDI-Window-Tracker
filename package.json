@@ -1,0 +1,18 @@
+{
+    "name": "com.gltovar.klakndiwindowtracker",
+    "displayName": "KlaxNDI Window Tracker",
+    "description": "A utility that lets you track specific windows using KlakNDI https://github.com/keijiro/KlakNDI",
+    "version": "0.7.0",
+    "unity": "2018.3",
+    "license": "MIT",
+    "dependencies": {
+        "jp.keijiro.klak.ndi": "1.0.12"
+    },
+    "samples": [
+        {
+            "displayName": "Example",
+            "description": "Basic Example",
+            "path": "Samples~/Example"
+        }
+    ]
+}
