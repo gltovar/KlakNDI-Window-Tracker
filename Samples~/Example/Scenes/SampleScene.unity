@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 1093570361}
   - component: {fileID: 1093570365}
   m_Layer: 0
-  m_Name: Quad
+  m_Name: NDI Result
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -454,6 +454,7 @@ MonoBehaviour:
   bottomCropPixels: 0
   leftCropPixels: 0
   rightCropPixels: 0
+  manualAdjustTexture: 0
 --- !u!4 &1499299382
 Transform:
   m_ObjectHideFlags: 0

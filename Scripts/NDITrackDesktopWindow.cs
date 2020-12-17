@@ -49,21 +49,17 @@ public class NDITrackDesktopWindow : MonoBehaviour
     {
         return normalizeMonitorNamePattern.Replace(monitorName, "");
     }
-    static Rect GetNormalizedRectRelativeToMonitor(RECT globalPos, MONITORINFOEX targetMonitor, NDITrackDesktopWindow ndiTracker)
+    static void GetNormalizedRectRelativeToMonitor(RECT globalPos, MONITORINFOEX targetMonitor, NDITrackDesktopWindow ndiTracker)
     {
-        Rect result = new Rect();
-
         int width = Math.Abs(targetMonitor.Monitor.Right - targetMonitor.Monitor.Left);
         int height = Math.Abs(targetMonitor.Monitor.Bottom - targetMonitor.Monitor.Top);
-        
-        result.y = ((float)(globalPos.Top - targetMonitor.Monitor.Top) / height) + ((float)ndiTracker.topCropPixels / height);
-        result.yMax = ((float)(globalPos.Bottom - targetMonitor.Monitor.Top) / height) - ((float)ndiTracker.bottomCropPixels / height);
-        result.x = ((float)(globalPos.Left - targetMonitor.Monitor.Left) / width) + ((float)ndiTracker.leftCropPixels / width);
-        result.xMax = ((float)(globalPos.Right - targetMonitor.Monitor.Left) / width) - ((float)ndiTracker.rightCropPixels / width);
 
-        result.y = (1f - result.y) - result.height; // not sure why i have to mod this value at the moment
+        ndiTracker.normalizedWindowRectangle.y = ((float)(globalPos.Top - targetMonitor.Monitor.Top) / height) + ((float)ndiTracker.topCropPixels / height);
+        ndiTracker.normalizedWindowRectangle.yMax = ((float)(globalPos.Bottom - targetMonitor.Monitor.Top) / height) - ((float)ndiTracker.bottomCropPixels / height);
+        ndiTracker.normalizedWindowRectangle.x = ((float)(globalPos.Left - targetMonitor.Monitor.Left) / width) + ((float)ndiTracker.leftCropPixels / width);
+        ndiTracker.normalizedWindowRectangle.xMax = ((float)(globalPos.Right - targetMonitor.Monitor.Left) / width) - ((float)ndiTracker.rightCropPixels / width);
 
-        return result;
+        ndiTracker.normalizedWindowRectangle.y = (1f - ndiTracker.normalizedWindowRectangle.y) - ndiTracker.normalizedWindowRectangle.height; // not sure why i have to mod this value at the moment
     }
 
     [Serializable]
@@ -76,14 +72,18 @@ public class NDITrackDesktopWindow : MonoBehaviour
     public string targetWName = "";
     public string requestNDIName = "";
     public NDIMonitorId[] ndiMonitorMapping;
-    public Rect normalizedWindowRectangle;
+    public Rect normalizedWindowRectangle = new Rect(0f,0f,1f,1f);
     public int topCropPixels = 0;
     public int bottomCropPixels = 0;
     public int leftCropPixels = 0;
     public int rightCropPixels = 0;
 
+    // in case you need to adjust texture offset/scale manually
+    public bool manualAdjustTexture = false;
+
     private string currentNDIName;
     private NdiReceiver ndiReceiver;
+    
 
     void Start()
     {
@@ -156,15 +156,18 @@ public class NDITrackDesktopWindow : MonoBehaviour
             return;
         }
 
-        if(currentNDIName != null && currentNDIName.Length > 0 && ndiReceiver && ndiReceiver.texture)
+        if(currentNDIName != null && currentNDIName.Length > 0)
         {
             if (trackWindow)
             {
-                normalizedWindowRectangle = GetNormalizedRectRelativeToMonitor(output, monitorInfo, this);
+                GetNormalizedRectRelativeToMonitor(output, monitorInfo, this);
             }
             else
             {
-                normalizedWindowRectangle = new Rect(0, 0, 1, 1);
+                normalizedWindowRectangle.x = 0;
+                normalizedWindowRectangle.y = 0;
+                normalizedWindowRectangle.width = 0;
+                normalizedWindowRectangle.height = 0;
             }
         }
     }
@@ -184,10 +187,10 @@ public class NDITrackDesktopWindow : MonoBehaviour
 
     void UpdateMaterial()
     {
-        if (ndiReceiver && ndiReceiver.targetRenderer && currentNDIName != null && currentNDIName.Length > 0)
+        if (!manualAdjustTexture && ndiReceiver && ndiReceiver.targetRenderer && currentNDIName != null && currentNDIName.Length > 0)
         {
-            ndiReceiver.targetRenderer.material.SetTextureOffset(ndiReceiver.targetMaterialProperty, new Vector2(normalizedWindowRectangle.x, normalizedWindowRectangle.y));
-            ndiReceiver.targetRenderer.material.SetTextureScale(ndiReceiver.targetMaterialProperty, new Vector2(normalizedWindowRectangle.width, normalizedWindowRectangle.height));
+            ndiReceiver.targetRenderer.material.SetTextureOffset(ndiReceiver.targetMaterialProperty, normalizedWindowRectangle.position);
+            ndiReceiver.targetRenderer.material.SetTextureScale(ndiReceiver.targetMaterialProperty, normalizedWindowRectangle.size);
         }
     }
 
