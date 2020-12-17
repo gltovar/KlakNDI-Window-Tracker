@@ -69,6 +69,7 @@ public class NDITrackDesktopWindow : MonoBehaviour
         public string monitorName;
     }
 
+    public NdiReceiver ndiReceiver;
     public string targetWName = "";
     public string requestNDIName = "";
     public NDIMonitorId[] ndiMonitorMapping;
@@ -82,8 +83,6 @@ public class NDITrackDesktopWindow : MonoBehaviour
     public bool manualAdjustTexture = false;
 
     private string currentNDIName;
-    private NdiReceiver ndiReceiver;
-    
 
     void Start()
     {
