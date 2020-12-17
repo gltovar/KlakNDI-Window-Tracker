@@ -28,5 +28,8 @@ There is a problem with ScreenCapture HX, often if you change an NDIReceiver ndi
 
 ## Change Log
 
+- 0.7.1
+  - Exposed the `NdiReceiver` in `NDITrackDesktopWindow` to allow multiple trackers to use the same Receiver
+
 - 0.7.0
   - Initial Release
